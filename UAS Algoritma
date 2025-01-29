@@ -1,0 +1,131 @@
+import java.util.Scanner;
+
+public class Restoran {
+
+    // Menyimpan data menu makanan dan harga
+    static String[] menu = {"Nasi Goreng", "Mie Goreng", "Ayam Bakar", "Sate", "Gado-Gado"};
+    static int[] harga = {20000, 15000, 30000, 25000, 18000};
+
+    // Fungsi untuk menampilkan menu restoran
+    public static void tampilkanMenu() {
+        System.out.println("\nMenu Restoran:");
+        for (int i = 0; i < menu.length; i++) {
+            System.out.println((i + 1) + ". " + menu[i] + " - Rp " + harga[i]);
+        }
+    }
+
+    // Fungsi untuk mencari makanan berdasarkan nama
+    public static int cariMakanan(String namaMakanan) {
+        for (int i = 0; i < menu.length; i++) {
+            if (menu[i].equalsIgnoreCase(namaMakanan)) {
+                return i; // Mengembalikan indeks jika ditemukan
+            }
+        }
+        return -1; // Mengembalikan -1 jika tidak ditemukan
+    }
+
+    // Fungsi untuk mengurutkan menu berdasarkan harga (ascending)
+    public static void urutkanMenu() {
+        for (int i = 0; i < harga.length - 1; i++) {
+            for (int j = i + 1; j < harga.length; j++) {
+                if (harga[i] > harga[j]) {
+                    // Tukar harga
+                    int tempHarga = harga[i];
+                    harga[i] = harga[j];
+                    harga[j] = tempHarga;
+
+                    // Tukar menu
+                    String tempMenu = menu[i];
+                    menu[i] = menu[j];
+                    menu[j] = tempMenu;
+                }
+            }
+        }
+    }
+
+    // Fungsi untuk menghitung total harga pesanan
+    public static int hitungTotalHarga(int[] pesanan) {
+        int total = 0;
+        for (int i = 0; i < pesanan.length; i++) {
+            if (pesanan[i] != 0) {
+                total += harga[pesanan[i] - 1];  // Menambahkan harga makanan berdasarkan nomor yang dipilih
+            }
+        }
+        return total;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int pilihan;
+        int[] pesanan = new int[5]; // Array untuk menyimpan nomor menu yang dipesan
+        int totalHarga = 0;
+
+        do {
+            // Menu utama
+            System.out.println("\nMenu Utama Restoran SERBA GAADA SEJAHTERA ");
+            System.out.println("1. Tampilkan Menu");
+            System.out.println("2. Cari Makanan");
+            System.out.println("3. Urutkan Menu Berdasarkan Harga");
+            System.out.println("4. Pesan Makanan");
+            System.out.println("5. Lihat Total Harga");
+            System.out.println("6. Keluar");
+            System.out.print("Pilih menu (1-6): ");
+            pilihan = scanner.nextInt();
+            scanner.nextLine();  // Mengkonsumsi newline yang tersisa
+
+            switch (pilihan) {
+                case 1:
+                    tampilkanMenu();  // Menampilkan menu restoran
+                    break;
+
+                case 2:
+                    // Mencari makanan berdasarkan nama
+                    System.out.print("Masukkan nama makanan yang ingin dicari: ");
+                    String namaMakanan = scanner.nextLine();
+                    int index = cariMakanan(namaMakanan);
+                    if (index != -1) {
+                        System.out.println(namaMakanan + " ditemukan dengan harga Rp " + harga[index]);
+                    } else {
+                        System.out.println("Makanan tidak ditemukan.");
+                    }
+                    break;
+
+                case 3:
+                    // Mengurutkan menu berdasarkan harga
+                    urutkanMenu();
+                    System.out.println("Menu berhasil diurutkan berdasarkan harga.");
+                    break;
+
+                case 4:
+                    // Memesan makanan
+                    System.out.println("Pilih makanan yang ingin dipesan:");
+                    tampilkanMenu();
+                    System.out.print("Masukkan nomor makanan yang ingin dipesan (1-5): ");
+                    int nomorMakanan = scanner.nextInt();
+                    if (nomorMakanan >= 1 && nomorMakanan <= menu.length) {
+                        pesanan[nomorMakanan - 1] = nomorMakanan;  // Menyimpan nomor menu yang dipesan
+                        System.out.println(menu[nomorMakanan - 1] + " telah ditambahkan ke pesanan.");
+                    } else {
+                        System.out.println("Nomor makanan tidak valid.");
+                    }
+                    break;
+
+                case 5:
+                    // Menampilkan total harga pesanan
+                    totalHarga = hitungTotalHarga(pesanan);
+                    System.out.println("Total harga pesanan: Rp " + totalHarga);
+                    break;
+
+                case 6:
+                    // Keluar dari program
+                    System.out.println("Terima kasih telah berkunjung ke restoran kami.");
+                    break;
+
+                default:
+                    System.out.println("Pilihan tidak valid. Silakan pilih menu antara 1 hingga 6.");
+            }
+        } while (pilihan != 6);
+
+        scanner.close();
+    }
+}
