@@ -2,6 +2,11 @@ package Biodata;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import javax.swing.table.TableRowSorter;
 import javax.swing.RowFilter;
 import javax.swing.JComboBox;
@@ -18,7 +23,7 @@ public class Biodata extends javax.swing.JFrame {
      */
     public Biodata() {
         initComponents();
-        
+        muatDariFile();
     }
 
     /**
@@ -279,7 +284,17 @@ public class Biodata extends javax.swing.JFrame {
         });
 
     }                                       
+   private void simpanKeFile(String data) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("data_bio.txt", true))) {
+            writer.write(data);
+            writer.newLine();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Gagal menyimpan ke file: " + e.getMessage());
+        }
+    }
 
+    
+    
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {                                          
 
         String no = txtNo.getText();
@@ -289,9 +304,16 @@ public class Biodata extends javax.swing.JFrame {
         String alamat = txtAlamat.getText();
         String noHp = txtNoHp.getText();
 
-        // Simpan ke tabel
+      
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.addRow(new Object[]{no, nama, gender, pekerjaan, alamat, noHp});
+
+        
+        String data = no + " | " + nama + " | " + gender + " | " + pekerjaan + " | " + alamat + " | " + noHp;
+
+        
+        simpanKeFile(data);
+        
     }                                         
 
     private void txtNoActionPerformed(java.awt.event.ActionEvent evt) {                                      
@@ -380,3 +402,21 @@ public class Biodata extends javax.swing.JFrame {
             }
         });
     }
+    
+    private void muatDariFile() {
+    System.out.println("jos");
+    DefaultTableModel model = (DefaultTableModel) table.getModel();
+    model.setRowCount(0); // Hapus isi tabel sebelum mengisi ulang
+
+    try (BufferedReader reader = new BufferedReader(new FileReader("data_bio.txt"))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+            Object[] data = line.split(" \\| ", -1); // -1 agar semua kolom terbaca meskipun kosong
+//            if (data.length == 6) {
+                model.addRow(data);
+//            }
+        }
+    } catch (IOException e) {
+        JOptionPane.showMessageDialog(this, "Gagal membaca file: " + e.getMessage());
+    }
+}
